@@ -25,7 +25,7 @@ $(NAME): cOBJ $(OBJ)
 	@printf "$(MAGENTA)"
 	@$(AR) $(NAME) $(OBJDIR)/*
 	@$(RAN) $(NAME)
-	@rm /tmp/log.txt;
+	@rm /tmp/log;
 	@printf "Done !$(DEF_COLOR)\n"
 
 cOBJ:
@@ -35,8 +35,8 @@ cOBJ:
 	@mkdir $(OBJDIR)
 
 $(OBJDIR)/%.o: src/%.c
-	@make -n | grep "$<" >> /tmp/log.txt; \
-	len=$$(grep -c "cc -Wall" /tmp/log.txt); \
+	@make -n | grep "$<" >> /tmp/log; \
+	len=$$(grep -c "cc -Wall" /tmp/log); \
 	total=$$(echo src/*.c | wc -w); \
 	printf '$(YELLOW)Compiling : %-25s $(CYAN)-->	$(YELLOW)%-30s $(GREEN)%d$(GRAY)/$(RED)%d\n' "$<" "$@" "$$len" "$$total";
 	@printf "$(BLUE)"
