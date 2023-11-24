@@ -1,28 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_files.c                                      :+:      :+:    :+:   */
+/*   file_access.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/23 16:54:01 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/24 06:56:37 by bvan-pae         ###   ########.fr       */
+/*   Created: 2023/11/23 18:26:46 by bvan-pae          #+#    #+#             */
+/*   Updated: 2023/11/23 18:28:14 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-char	*get_file_one(char	*av[])
+int	check_fone_access(char	*fone_path)
 {
-	return (ft_strdup(av[1]));
-}
-
-char	*get_file_two(char	*av[])
-{
-	size_t	j;
-
-	j = 0;
-	while (av[j] != NULL)
-		j++;
-	return(ft_strdup(av[j - 1]));
+	if (access(fone_path, F_OK | R_OK) == -1)
+	{
+		perror("Could not access file");
+		exit(EXIT_FAILURE);
+	}
+	return (0);
 }

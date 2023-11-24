@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 15:30:36 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/18 11:38:47 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/24 07:11:50 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,25 @@ static char	*word_dup(const char *str, int start, int finish)
 	int		i;
 
 	i = 0;
-	word = malloc(sizeof(char) * (finish - start + 1));
+	word = ft_calloc((finish - start + 1), sizeof(char));
+	if (!word)
+		return (NULL);
 	while (start < finish)
 		word[i++] = str[start++];
 	word[i] = '\0';
 	return (word);
+}
+
+
+void	*free_tab(char *split[])
+{
+	size_t	i;
+
+	i = -1;
+	while (split[++i] != NULL)
+		free(split[i]);
+	free(split);
+	return (NULL);
 }
 
 char	**ft_split(char const *s, char c)
@@ -53,7 +67,7 @@ char	**ft_split(char const *s, char c)
 	int		index;
 	char	**split;
 
-	split = malloc((count_words(s, c) + 1) * sizeof(char *));
+	split = ft_calloc((count_words(s, c) + 1), sizeof(char *));
 	if (!s || !split)
 		return (0);
 	i = 0;
@@ -66,10 +80,11 @@ char	**ft_split(char const *s, char c)
 		else if ((s[i] == c || i == ft_strlen(s)) && index >= 0)
 		{
 			split[j++] = word_dup(s, index, i);
+			if (!split[j -1])
+				return(free_tab(split));
 			index = -1;
 		}
 		i++;
 	}
-	split[j] = 0;
 	return (split);
 }

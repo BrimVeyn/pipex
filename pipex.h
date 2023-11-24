@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:34:26 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/23 17:24:30 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/24 07:15:56 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,13 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 
-char	*parse_file_one(char	*av[]);
-char	*parse_file_two(char	*av[]);
+char	*get_file_one(char	*av[]);
+char	*get_file_two(char	*av[]);
 int	get_command_count(char	*av[]);
+int	check_fone_access(char	*fone_path);
+char	*ft_mstrjoin(const char *fstr, char *a_str, int n, int p);
+int	ft_vstrcmp(char	*s1, char	*s2);
+char	*get_delimiter(char	*av[]);
+char	***get_command_list(char *av[], int command_count);
 
 #endif
