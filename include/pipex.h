@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:34:26 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/24 09:02:57 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/24 19:21:49 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # define OFFSET 3
 # define BUFFER_SIZE 100
+# define HD_OFFSET 1
+
 
 #include "../pf_libft/include/pf_ft_printf.h"
 #include <stdio.h>
