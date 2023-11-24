@@ -1,23 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   file_access.c                                      :+:      :+:    :+:   */
+/*   free_manager.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/23 18:26:46 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/23 18:28:14 by bvan-pae         ###   ########.fr       */
+/*   Created: 2023/11/24 08:59:41 by bvan-pae          #+#    #+#             */
+/*   Updated: 2023/11/24 09:01:56 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../include/pipex.h"
 
-int	check_fone_access(char	*fone_path)
+void	free_cmds(char ***cmds)
 {
-	if (access(fone_path, F_OK | R_OK) == -1)
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	j = 0;
+	while (cmds[i] != NULL)
 	{
-		perror("Could not access file");
-		exit(EXIT_FAILURE);
+		j = 0;
+		while(cmds[i][j] != NULL)
+		{
+			free(cmds[i][j]);
+			j++;
+		}
+		free(cmds[i]);
+		i++;
 	}
-	return (0);
+	free(cmds);
 }

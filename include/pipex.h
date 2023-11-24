@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:34:26 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/24 07:15:56 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/24 09:02:57 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # define OFFSET 3
 # define BUFFER_SIZE 100
 
-#include "pf_libft/include/pf_ft_printf.h"
+#include "../pf_libft/include/pf_ft_printf.h"
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -32,5 +32,7 @@ char	*ft_mstrjoin(const char *fstr, char *a_str, int n, int p);
 int	ft_vstrcmp(char	*s1, char	*s2);
 char	*get_delimiter(char	*av[]);
 char	***get_command_list(char *av[], int command_count);
+void	parse_cmds(char ***cmds);
+void	free_cmds(char ***cmds);
 
 #endif

@@ -6,12 +6,11 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:19:59 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/24 07:25:32 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/24 17:10:46 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pf_libft/include/libft.h"
-#include "pipex.h"
+#include "../include/pipex.h"
 
 int	get_command_count(char	*av[])
 {
@@ -25,15 +24,20 @@ int	get_command_count(char	*av[])
 	return (j - OFFSET);
 }
 
-char	*get_delimiter(char	*av[])
+void	parse_cmds(char ***cmds)
 {
-	return(ft_strdup(av[1]));
-}
+	size_t	i;
 
+	i = 0;
+	while(cmds[i] != NULL)
+	{
+		cmds[i][0] = ft_mstrjoin(cmds[i][0], "/usr/bin/", 1, 0);
+		i++;
+	}
+}
 
 char	***get_command_list(char *av[], int command_count)
 {
-//* */	char *cmd1[] = {"/usr/bin/grep", "h", "test1", NULL};
 	char	***cmds;
 	int	start = 2;
 	int end = command_count + 1;
@@ -44,12 +48,11 @@ char	***get_command_list(char *av[], int command_count)
 	i = 0;
 	while (start <= end)
 	{
-		// ft_printf("%s", av[start]);
 		cmds[i] = ft_split(av[start], ' ');
-		// ft_printf("|%s|", cmds[i][0]);
 		start++;
 		i++;
 	}
 	cmds[i] = NULL;
+	parse_cmds(cmds);
 	return (cmds);
 }

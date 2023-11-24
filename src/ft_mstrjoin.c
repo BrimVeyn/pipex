@@ -6,12 +6,11 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 18:31:03 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/24 06:54:08 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/24 08:34:40 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pf_libft/include/libft.h"
-#include "pipex.h"
+#include "../include/pipex.h"
 
 char	*ft_mstrjoin(const char *fstr, char *a_str, int n, int p)
 {
