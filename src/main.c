@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:33:32 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/27 17:20:54 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/27 19:01:36 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int	pipex_exec(char	**cmds, char **env)
+int	pipex_exec(char	**cmds, char **env, t_pipex_data pdata)
 {
 	if (execve(cmds[0], cmds, env) == -1)
 	{
 		perror("Invalid command execution");
+		free_cmds(pdata.cmds);
 		return (-1);
 	}
 	return (0);
 }
 
-int	pipex_redirect(char	**cmds, char **env, int fdin)
+int	pipex_redirect(char	**cmds, char **env, int fdin, t_pipex_data pdata)
 {
 	pid_t	pid;
 	int	pipe_fd[2];
@@ -45,10 +46,10 @@ int	pipex_redirect(char	**cmds, char **env, int fdin)
 		close(pipe_fd[0]);
 		dup2(pipe_fd[1], STDOUT_FILENO);
 		if (fdin == STDIN_FILENO)
-			exit(1);
+			exit(EXIT_FAILURE);
 		else
 		{
-			if (pipex_exec(cmds, env) == -1)
+			if (pipex_exec(cmds, env, pdata) == -1)
 				return (-1);
 		}
 		close(pipe_fd[1]);
@@ -96,7 +97,7 @@ char	*ft_cdel(char *to_del, char *str)
 
 }
 
-char	*read_till_delimiter(t_pipex_data pdata)
+void	read_till_delimiter(t_pipex_data pdata)
 {
 	char *buf;
 	char *new;
@@ -118,7 +119,9 @@ char	*read_till_delimiter(t_pipex_data pdata)
 	}
 	new = ft_cdel(pdata.delimiter, new);
 	write(pdata.fd_fone, new, ft_strlen(new));
-	return (new);
+	free(buf);
+	free(ndelimiter);
+	free(new);
 }
 
 int	pipex_open(char	*path, char *mode, t_pipex_data pdata)
@@ -142,7 +145,7 @@ void	pipex_check(int ac)
 {
 	if (ac < 5)
 	{
-		write(STDERR_FILENO, "Invalid number of arguments\n", 28);
+		write(STDERR_FILENO, "Invalid number of arguments : pipex uses at least 4 arguments.\n", 63);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -152,18 +155,18 @@ void	pipex_fonecheck(t_pipex_data *pdata, char *av[], int ac)
 	if (ft_vstrcmp("here_doc", av[1]))
 	{
 		pdata->delimiter = av[2];
-		pdata->fd_fone = pipex_open(".heredoc_tmp", "write", *pdata);
 		pdata->fone_path = ".heredoc_tmp";
-		pdata->stdin_read = read_till_delimiter(*pdata);
+		pdata->fd_fone = pipex_open(".heredoc_tmp", "write", *pdata);
+		read_till_delimiter(*pdata);
 		close(pdata->fd_fone);
 		pdata->fd_fone = pipex_open(".heredoc_tmp", "read", *pdata);
 		pdata->fd_ftwo = pipex_open(av[ac - 1], "append", *pdata);
 	}
 	else
 	{
-		pdata->fd_fone = open(av[1], O_RDONLY); 
 		pdata->fone_path = av[1];
-		check_fone_access(av[1]);
+		pdata->fd_fone = pipex_open(pdata->fone_path, "read", *pdata); 
+		check_fone_access(pdata->fone_path);
 		pdata->fd_ftwo = pipex_open(av[ac - 1], "write", *pdata);
 	}
 	pdata->ftwo_path = av[ac - 1];
@@ -176,19 +179,17 @@ int main (int ac, char	*av[], char *env[])
 
 	pipex_check(ac);
 	pipex_fonecheck(&pdata, av, ac);
-
 	pdata.hd_offset = 1 * ft_vstrcmp("here_doc", av[1]);
 	pdata.cmds_count = get_command_count(av, pdata.hd_offset);
 	pdata.cmds = get_command_list(av, pdata.cmds_count, pdata.hd_offset);
 	dup2(pdata.fd_fone, STDIN_FILENO);
 	dup2(pdata.fd_ftwo, STDOUT_FILENO);
-	
-	if (pipex_redirect(pdata.cmds[0], env, pdata.fd_fone) == -1)
+	if (pipex_redirect(pdata.cmds[0], env, pdata.fd_fone, pdata) == -1)
 		pipex_error("Error", pdata);
 	c = 0;
 	while (c < pdata.cmds_count - 1)
 	{
-		if (pipex_redirect(pdata.cmds[c++], env, pdata.fd_fone) == -1)
+		if (pipex_redirect(pdata.cmds[c++], env, pdata.fd_fone, pdata) == -1)
 		{
 			close(pdata.fd_fone);
 			unlink(av[ac - 1]);
@@ -196,7 +197,7 @@ int main (int ac, char	*av[], char *env[])
 			exit(EXIT_FAILURE);
 		}
 	}
-	if (pipex_exec(pdata.cmds[pdata.cmds_count - 1], env) == -1)
+	if (pipex_exec(pdata.cmds[pdata.cmds_count - 1], env, pdata) == -1)
 	{
 		close(pdata.fd_fone);
 		unlink(av[ac - 1]);

@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 13:12:53 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/27 15:20:12 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/27 18:33:23 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ t_var_utils	run_woflags(t_var_utils var, const char *fmt, va_list *args)
 		var.len += ft_strlen(var.fstr);
 		if (var.fstr[0] != -45)
 		{
-			ft_putstr_fd(var.fstr, 1);
+			ft_putstr_fd(var.fstr, 2);
 			free(var.fstr);
 		}
 		else
@@ -50,7 +50,7 @@ t_var_utils	run_wflags(t_var_utils var, const char *fmt, va_list *args)
 	if (var.flag == 0)
 	{
 		var.fstr = execute_flag(var.fstr, var.alist);
-		ft_putstr_fd(var.fstr, 1);
+		ft_putstr_fd(var.fstr, 2);
 		var.len += ft_strlen(var.fstr);
 		free(var.fstr);
 	}

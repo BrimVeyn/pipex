@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 07:53:24 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/18 11:40:12 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/27 18:33:09 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,9 +107,9 @@ int	execute_and_print_c(char *newstr, t_flag_triglist a)
 	while (newstr[i] != 0)
 	{
 		if (newstr[i] != -45)
-			write(1, &newstr[i], 1);
+			write(1, &newstr[i], 2);
 		else
-			write(1, "\0", 1);
+			write(1, "\0", 2);
 		i++;
 	}
 	free(newstr);
