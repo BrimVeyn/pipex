@@ -1,7 +1,8 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 NAME = pipex.a
-SRC = src/file_access.c src/ft_mstrjoin.c src/main.c src/parse_command.c src/parse_files.c src/free_manager.c
+SRC = src/file_access.c src/parse_utils.c src/main.c src/parse_command.c \
+	  src/parse_files.c src/free_manager.c src/errors.c
 HSRC = .
 OBJ = $(SRC:src/%.c=objects/%.o)
 AR = ar rc

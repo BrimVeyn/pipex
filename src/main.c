@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:33:32 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/27 19:01:36 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/27 19:04:00 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void	read_till_delimiter(t_pipex_data pdata)
 			write(1, "heredoc> ", 9);
 	}
 	new = ft_cdel(pdata.delimiter, new);
-	write(pdata.fd_fone, new, ft_strlen(new));
+	write(pdata.fone_fd, new, ft_strlen(new));
 	free(buf);
 	free(ndelimiter);
 	free(new);
@@ -156,18 +156,18 @@ void	pipex_fonecheck(t_pipex_data *pdata, char *av[], int ac)
 	{
 		pdata->delimiter = av[2];
 		pdata->fone_path = ".heredoc_tmp";
-		pdata->fd_fone = pipex_open(".heredoc_tmp", "write", *pdata);
+		pdata->fone_fd = pipex_open(".heredoc_tmp", "write", *pdata);
 		read_till_delimiter(*pdata);
-		close(pdata->fd_fone);
-		pdata->fd_fone = pipex_open(".heredoc_tmp", "read", *pdata);
-		pdata->fd_ftwo = pipex_open(av[ac - 1], "append", *pdata);
+		close(pdata->fone_fd);
+		pdata->fone_fd = pipex_open(".heredoc_tmp", "read", *pdata);
+		pdata->ftwo_fd = pipex_open(av[ac - 1], "append", *pdata);
 	}
 	else
 	{
 		pdata->fone_path = av[1];
-		pdata->fd_fone = pipex_open(pdata->fone_path, "read", *pdata); 
+		pdata->fone_fd = pipex_open(pdata->fone_path, "read", *pdata); 
 		check_fone_access(pdata->fone_path);
-		pdata->fd_ftwo = pipex_open(av[ac - 1], "write", *pdata);
+		pdata->ftwo_fd = pipex_open(av[ac - 1], "write", *pdata);
 	}
 	pdata->ftwo_path = av[ac - 1];
 }
@@ -182,16 +182,16 @@ int main (int ac, char	*av[], char *env[])
 	pdata.hd_offset = 1 * ft_vstrcmp("here_doc", av[1]);
 	pdata.cmds_count = get_command_count(av, pdata.hd_offset);
 	pdata.cmds = get_command_list(av, pdata.cmds_count, pdata.hd_offset);
-	dup2(pdata.fd_fone, STDIN_FILENO);
-	dup2(pdata.fd_ftwo, STDOUT_FILENO);
-	if (pipex_redirect(pdata.cmds[0], env, pdata.fd_fone, pdata) == -1)
+	dup2(pdata.fone_fd, STDIN_FILENO);
+	dup2(pdata.ftwo_fd, STDOUT_FILENO);
+	if (pipex_redirect(pdata.cmds[0], env, pdata.fone_fd, pdata) == -1)
 		pipex_error("Error", pdata);
 	c = 0;
 	while (c < pdata.cmds_count - 1)
 	{
-		if (pipex_redirect(pdata.cmds[c++], env, pdata.fd_fone, pdata) == -1)
+		if (pipex_redirect(pdata.cmds[c++], env, pdata.fone_fd, pdata) == -1)
 		{
-			close(pdata.fd_fone);
+			close(pdata.fone_fd);
 			unlink(av[ac - 1]);
 			free_cmds(pdata.cmds);
 			exit(EXIT_FAILURE);
@@ -199,13 +199,13 @@ int main (int ac, char	*av[], char *env[])
 	}
 	if (pipex_exec(pdata.cmds[pdata.cmds_count - 1], env, pdata) == -1)
 	{
-		close(pdata.fd_fone);
+		close(pdata.fone_fd);
 		unlink(av[ac - 1]);
 		free_cmds(pdata.cmds);
 		exit(EXIT_FAILURE);
 	}
-	close(pdata.fd_fone);
-	close(pdata.fd_ftwo);
+	close(pdata.fone_fd);
+	close(pdata.ftwo_fd);
 	free_cmds(pdata.cmds);
 	exit(EXIT_SUCCESS);
 }

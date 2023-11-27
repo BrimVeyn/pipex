@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:34:26 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/27 15:53:10 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/27 19:04:29 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ typedef struct s_pipex_data
 	char	*stdin_read;
 	char	*fone_path;
 	char	*ftwo_path;
-	int		fd_fone;
-	int		fd_ftwo;
+	int		fone_fd;
+	int		ftwo_fd;
 	int		hd_offset;	
 	int		cmds_count;
 
