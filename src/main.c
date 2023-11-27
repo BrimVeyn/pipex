@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:33:32 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/24 19:27:56 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/27 08:19:31 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,16 +105,14 @@ char	*read_till_delimiter(char *delimiter)
 	bytes_read = 0;
 	buf = ft_calloc(1, 1);
 	new = ft_calloc(1, 1);
-	ndelimiter = ft_cjoin(strdup(delimiter), 10, 1, 0);
+	ndelimiter = ft_cjoin(ft_cjoin(strdup(delimiter), 10, 1, 0), 10, 1, 1);
 	while (ft_strstr(new, ndelimiter) == 0 && ft_strstr(new, delimiter) != ft_strlen(delimiter) - 1)
 	{
-		write(2, "heredoc>", 8);
 		bytes_read = read(0, buf, 1);
 		new = ft_strjoinfree(new, buf);
 		buf = ft_calloc(bytes_read, 1);
 	}
 	new = ft_cdel(delimiter, new);
-	ft_putstr_fd(new, 2);
 	return (new);
 }
 
@@ -122,15 +120,16 @@ int main (int ac, char	*av[], char *env[])
 {
 	char	*delimiter;
 	int		fd_file1;
+	char	*stdin_read;
 
-	// if (ac < 5)
-	// 	write(STDERR_FILENO, "Invalid number of arguments\n", 28);
+	if (ac < 5)
+		write(STDERR_FILENO, "Invalid number of arguments\n", 28);
 	if (ft_vstrcmp("here_doc", av[1]))
 	{
 		delimiter = av[2];
-		char *stdin_read = read_till_delimiter(delimiter);
-		(void) stdin_read;
-		fd_file1 = open(av[1], O_RDONLY);
+		stdin_read = read_till_delimiter(delimiter);
+		write (0, &stdin_read, ft_strlen(stdin_read));
+		// fd_file1 = open(av[1], O_RDONLY);
 	}
 	else
 	{
