@@ -6,13 +6,13 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:19:59 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/24 17:10:46 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/27 09:48:34 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
 
-int	get_command_count(char	*av[])
+int	get_command_count(char	*av[], int hd_offset)
 {
 	size_t	j;
 
@@ -21,7 +21,7 @@ int	get_command_count(char	*av[])
 	{
 		j++;
 	}
-	return (j - OFFSET);
+	return (j - OFFSET - hd_offset);
 }
 
 void	parse_cmds(char ***cmds)
@@ -36,11 +36,11 @@ void	parse_cmds(char ***cmds)
 	}
 }
 
-char	***get_command_list(char *av[], int command_count)
+char	***get_command_list(char *av[], int command_count, int hd_offset)
 {
 	char	***cmds;
-	int	start = 2;
-	int end = command_count + 1;
+	int	start = 2 + hd_offset;
+	int end = command_count + 1 + hd_offset;
 	int i;
 	cmds = (char ***) ft_calloc(command_count + 1, sizeof(char **));
 	if (!cmds)
