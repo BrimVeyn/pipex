@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:33:32 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/28 16:31:12 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/28 17:31:36 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	read_till_delimiter(t_pipex_data pdata)
 	{
 		bytes_read = read(STDIN_FILENO, buf, BUFFER_SIZE);
 		new = ft_strjoinfree(new, buf);
-		buf = ft_calloc(bytes_read, 1);
+		buf = ft_calloc(bytes_read + BUFFER_SIZE, 1);
 		if (new[ft_strlen(new) - 1] == '\n' && new[ft_strlen(new) - 2] != pdata.delimiter[ft_strlen(pdata.delimiter) - 1])
 			write(1, "heredoc> ", 9);
 	}
