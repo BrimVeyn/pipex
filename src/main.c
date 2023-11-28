@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:33:32 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/27 19:04:00 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/28 08:03:58 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,8 @@ int	pipex_redirect(char	**cmds, char **env, int fdin, t_pipex_data pdata)
 		if (fdin == STDIN_FILENO)
 			exit(EXIT_FAILURE);
 		else
-		{
 			if (pipex_exec(cmds, env, pdata) == -1)
 				return (-1);
-		}
 		close(pipe_fd[1]);
 	}
 	return (0);
@@ -177,6 +175,14 @@ int main (int ac, char	*av[], char *env[])
 	t_pipex_data	pdata;
 	int	c;
 
+	int	i = 0;
+	while (env[i])
+	{
+		if (ft_strstr(env[i], "PATH"))
+			ft_printf("%s", env[i]);
+		// ft_printf("%s", env[i]);
+		i++;
+	}
 	pipex_check(ac);
 	pipex_fonecheck(&pdata, av, ac);
 	pdata.hd_offset = 1 * ft_vstrcmp("here_doc", av[1]);
@@ -188,22 +194,10 @@ int main (int ac, char	*av[], char *env[])
 		pipex_error("Error", pdata);
 	c = 0;
 	while (c < pdata.cmds_count - 1)
-	{
 		if (pipex_redirect(pdata.cmds[c++], env, pdata.fone_fd, pdata) == -1)
-		{
-			close(pdata.fone_fd);
-			unlink(av[ac - 1]);
-			free_cmds(pdata.cmds);
-			exit(EXIT_FAILURE);
-		}
-	}
+			pipex_error("Error", pdata);
 	if (pipex_exec(pdata.cmds[pdata.cmds_count - 1], env, pdata) == -1)
-	{
-		close(pdata.fone_fd);
-		unlink(av[ac - 1]);
-		free_cmds(pdata.cmds);
-		exit(EXIT_FAILURE);
-	}
+		pipex_error("Erorr", pdata);
 	close(pdata.fone_fd);
 	close(pdata.ftwo_fd);
 	free_cmds(pdata.cmds);
