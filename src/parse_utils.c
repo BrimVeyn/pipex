@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 18:31:03 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/27 19:06:06 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/28 15:14:56 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,29 @@ int	ft_vstrcmp(char	*s1, char	*s2)
 			return(0);
 	return (1);
 	
+}
+
+char	*pipex_strstr(char **haystack, char *needle)
+{
+	size_t	j;
+	size_t	i;
+	size_t	k;	
+	size_t const n_size = ft_strlen(needle);
+
+	k = 0;
+	while (haystack[k])
+	{
+		i = 0;
+		while (haystack[k][i])
+		{
+			j = 0;
+			if (haystack[k][i] == needle[j] && haystack[k][i - 1] != '_')
+				while(haystack[k][++i] == needle[++j])
+					if (j + 1 == n_size)
+						return(&haystack[k][i -j]);
+			i = i - j + 1;
+		}
+		k++;
+	}
+	return (0);
 }

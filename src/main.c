@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:33:32 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/28 08:03:58 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/28 16:31:12 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,46 +53,6 @@ int	pipex_redirect(char	**cmds, char **env, int fdin, t_pipex_data pdata)
 		close(pipe_fd[1]);
 	}
 	return (0);
-}
-
-int	ft_strstr(char *haystack, char *needle)
-{
-	size_t	j;
-	size_t	i;
-	size_t const n_size = ft_strlen(needle);
-
-	i = 0;
-	while (haystack[i] != 0)
-	{
-		j = 0;
-		if (haystack[i] == needle[j])
-			while(haystack[++i] == needle[++j])
-				if (j + 1 == n_size)
-					return(i);
-		i = i - j + 1;
-	}
-	return (0);
-}
-
-char	*ft_cdel(char *to_del, char *str)
-{
-	int	i;
-	int	new_size;
-	char	*new;
-
-	i = -1;
-	new_size = (int) (ft_strlen(str) - ft_strlen(to_del));
-	if (!new_size)
-	{
-		free(str);
-		return (NULL);
-	}
-	new = (char *) ft_calloc(new_size + 1, sizeof(char));
-	while (++i < new_size - 1)
-		new[i] = str[i];
-	free(str);
-	return (new);
-
 }
 
 void	read_till_delimiter(t_pipex_data pdata)
@@ -175,19 +135,20 @@ int main (int ac, char	*av[], char *env[])
 	t_pipex_data	pdata;
 	int	c;
 
-	int	i = 0;
-	while (env[i])
-	{
-		if (ft_strstr(env[i], "PATH"))
-			ft_printf("%s", env[i]);
-		// ft_printf("%s", env[i]);
-		i++;
-	}
+	// int	i = 0;
+	// while (env[i])
+	// {
+	// 	if (ft_strstr(env[i], "PATH"))
+	// 		ft_printf("%s", env[i]);
+	// 	// ft_printf("%s", env[i]);
+	// 	i++;
+	// }
 	pipex_check(ac);
 	pipex_fonecheck(&pdata, av, ac);
+	pdata.env = env;
 	pdata.hd_offset = 1 * ft_vstrcmp("here_doc", av[1]);
 	pdata.cmds_count = get_command_count(av, pdata.hd_offset);
-	pdata.cmds = get_command_list(av, pdata.cmds_count, pdata.hd_offset);
+	pdata.cmds = get_command_list(av, pdata);
 	dup2(pdata.fone_fd, STDIN_FILENO);
 	dup2(pdata.ftwo_fd, STDOUT_FILENO);
 	if (pipex_redirect(pdata.cmds[0], env, pdata.fone_fd, pdata) == -1)

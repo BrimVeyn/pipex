@@ -2,7 +2,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 NAME = pipex.a
 SRC = src/file_access.c src/parse_utils.c src/main.c src/parse_command.c \
-	  src/parse_files.c src/free_manager.c src/errors.c
+	  src/parse_files.c src/free_manager.c src/errors.c src/parse_utils_2.c
 HSRC = .
 OBJ = $(SRC:src/%.c=objects/%.o)
 AR = ar rc
@@ -44,12 +44,14 @@ $(OBJDIR)/%.o: src/%.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf "$(DEF_COLOR)"
 
-clean:
+clean:	
+	@make -C pf_libft/ clean
 	@rm -rf $(OBJDIR) 
 	@printf "$(RED)Objects deleted !$(DEF_COLOR)\n"
 
 fclean: clean
-	rm -f $(NAME)
+	@make -C pf_libft/ fclean
+	@rm -f $(NAME)
 	@printf "$(RED)Library deleted !$(DEF_COLOR)\n"
 
 makepf:
