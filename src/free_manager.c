@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 08:59:41 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/24 09:01:56 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/29 12:21:07 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void	free_cmds(char ***cmds)
 
 	i = 0;
 	j = 0;
+	if (!cmds)
+		return ;
 	while (cmds[i] != NULL)
 	{
 		j = 0;

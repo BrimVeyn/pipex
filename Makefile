@@ -1,5 +1,5 @@
 CC := cc
-CFLAGS := -Wall -Wextra -Werror
+CFLAGS := -Wall -Wextra -Werror -g
 LIB := pipex.a
 PROGRAM := pipex
 SRC = src/file_access.c src/parse_utils.c src/main.c src/parse_command.c \
@@ -28,12 +28,12 @@ $(LIB): makepf print_pipex $(OBJ)
 	@$(RAN) $(LIB)
 	@echo "$(GREEN)Making executable : $(PROGRAM)"
 	@$(CC) $(CFLAGS) $(LIB) -o $(PROGRAM)
-	@rm /tmp/log.txt;
+	@rm /tmp/pipex;
 	@printf "Done !$(DEF_COLOR)\n"
 
 $(OBJDIR)/%.o: src/%.c
-	@make -n | grep "$<" >> /tmp/log.txt; \
-	len=$$(grep -c "cc -Wall" /tmp/log.txt); \
+	@make -n | grep "$<" >> /tmp/pipex; \
+	len=$$(grep -c "cc -Wall" /tmp/pipex); \
 	total=$$(echo src/*.c | wc -w); \
 	printf '$(YELLOW)Compiling : %-25s $(CYAN)-->	$(YELLOW)%-30s $(GREEN)%d$(GRAY)/$(RED)%d\n' "$<" "$@" "$$len" "$$total";
 	@printf "$(BLUE)"
@@ -43,16 +43,18 @@ $(OBJDIR)/%.o: src/%.c
 clean:	
 	@make -C pf_libft/ clean
 	@rm -rf $(OBJDIR)/$(OBJ)
-	@printf "$(RED)Objects deleted !$(DEF_COLOR)\n"
+	@printf "$(RED)Objects deleted.$(DEF_COLOR)\n"
 
-fclean: clean
+fclean:
 	@make -C pf_libft/ fclean
+	@rm -rf $(OBJDIR)/$(OBJ)
+	@printf "$(RED)Objects deleted.$(DEF_COLOR)\n"
 	@rm -f $(LIB)
-	@printf "$(RED)Library deleted !$(DEF_COLOR)\n"
+	@printf "$(RED)Library deleted.$(DEF_COLOR)\n"
 
 makepf:
-	make -C pf_libft/
-	cp pf_libft/pf_libft.a pipex.a
+	@make -C pf_libft/
+	@cp pf_libft/pf_libft.a pipex.a
 
 print_pipex:
 	@echo "\n_______  _____  _______  ________  ____  ____  "
