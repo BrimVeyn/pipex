@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 16:30:13 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/28 16:42:47 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/28 18:46:14 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char	*ft_cdel(char *to_del, char *str)
 		return (NULL);
 	}
 	new = (char *) ft_calloc((ft_strlen(str) - ft_strlen(to_del)) + 1 , sizeof(char));
-	while (++i < ft_strlen(str))
+	while (++i < (int) ft_strlen(str))
 		if (!(i >= start && i <= end))
 			new[j++] = str[i];
 	free(str);

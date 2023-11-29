@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:19:59 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/28 17:26:29 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/28 19:00:15 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ char	*parse_env(char *exec, t_pipex_data pdata)
 			return (realexec);
 		i++;
 	}
-	pipex_error("Couldn't get path", pdata);
+	pipex_error("Path error: command not found.", pdata);
 	return(path);
 }
 

@@ -1,39 +1,35 @@
-CC = cc
-CFLAGS = -Wall -Wextra -Werror
-NAME = pipex.a
+CC := cc
+CFLAGS := -Wall -Wextra -Werror
+LIB := pipex.a
+PROGRAM := pipex
 SRC = src/file_access.c src/parse_utils.c src/main.c src/parse_command.c \
 	  src/parse_files.c src/free_manager.c src/errors.c src/parse_utils_2.c
-HSRC = .
 OBJ = $(SRC:src/%.c=objects/%.o)
-AR = ar rc
-RAN = ranlib 
-OBJDIR = objects
+AR := ar rc
+RAN := ranlib 
+OBJDIR := objects
 
-DEF_COLOR = \033[0;39m
-GRAY = \033[0;90m
-RED = \033[0;91m
-GREEN = \033[0;92m
-YELLOW = \033[0;93m
-BLUE = \033[0;94m
-MAGENTA = \033[0;95m
-CYAN = \033[0;96m
-WHITE = \033[0;97m
+DEF_COLOR 	:= \033[0;39m
+MAGENTA 	:= \033[0;95m
+GRAY 		:= \033[0;90m
+RED 		:= \033[0;91m
+GREEN 		:= \033[0;92m
+YELLOW 		:= \033[0;93m
+BLUE 		:= \033[0;94m
+CYAN 		:= \033[0;96m
+WHITE 		:= \033[0;97m
 
-all: $(NAME)
+all: $(LIB)
 
-$(NAME): makepf cOBJ pipex $(OBJ)
-	@echo "$(GREEN)Making library : $(NAME)"
+$(LIB): makepf print_pipex $(OBJ)
+	@echo "$(GREEN)Making library : $(LIB)"
 	@printf "$(MAGENTA)"
-	@$(AR) $(NAME) $(OBJDIR)/*
-	@$(RAN) $(NAME)
+	@$(AR) $(LIB) $(OBJ)
+	@$(RAN) $(LIB)
+	@echo "$(GREEN)Making executable : $(PROGRAM)"
+	@$(CC) $(CFLAGS) $(LIB) -o $(PROGRAM)
 	@rm /tmp/log.txt;
 	@printf "Done !$(DEF_COLOR)\n"
-
-cOBJ:
-	@clear
-	@echo "$(CYAN)Creating 'objects' directory$(DEF_COLOR)"
-	@if [ -d $(OBJDIR) ]; then rm -rf $(OBJDIR); fi;
-	@mkdir $(OBJDIR)
 
 $(OBJDIR)/%.o: src/%.c
 	@make -n | grep "$<" >> /tmp/log.txt; \
@@ -46,19 +42,19 @@ $(OBJDIR)/%.o: src/%.c
 
 clean:	
 	@make -C pf_libft/ clean
-	@rm -rf $(OBJDIR) 
+	@rm -rf $(OBJDIR)/$(OBJ)
 	@printf "$(RED)Objects deleted !$(DEF_COLOR)\n"
 
 fclean: clean
 	@make -C pf_libft/ fclean
-	@rm -f $(NAME)
+	@rm -f $(LIB)
 	@printf "$(RED)Library deleted !$(DEF_COLOR)\n"
 
 makepf:
 	make -C pf_libft/
 	cp pf_libft/pf_libft.a pipex.a
 
-pipex:
+print_pipex:
 	@echo "\n_______  _____  _______  ________  ____  ____  "
 	@echo "|_   __ \|_   _||_   __ \|_   __  ||_  _||_  _| "
 	@echo "| |__) | | |    | |__) | | |_ \_|  \ \  / /   "
