@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:33:32 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/29 19:15:46 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/30 10:16:47 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,28 +17,30 @@
 
 int	pipex_redirect(char	**cmds, char **env, int fdin, t_pipex_data *pdata)
 {
-	pid_t	pid;
 	int	pipe_fd[2];
 
 	pipe(pipe_fd);
-	pid = fork();
-	if (pid)
+	pdata->pidarr[pdata->iterator] = fork();
+	if (pdata->pidarr[pdata->iterator])
 	{	
 		close(pipe_fd[1]);
 		dup2(pipe_fd[0], STDIN_FILENO);
-		waitpid(pid, NULL, 0);
 		close(pipe_fd[0]);
 	}
-	else if (!pid)
+	else if (!pdata->pidarr[pdata->iterator])
 	{
 		close(pipe_fd[0]);
-		dup2(pipe_fd[1], STDOUT_FILENO);
+		if (pdata->iterator != pdata->cmds_count)
+			dup2(pipe_fd[1], STDOUT_FILENO);
+		else
+			dup2(pdata->ftwo_fd, STDOUT_FILENO);
 		if (fdin == STDIN_FILENO)
 			exit(EXIT_FAILURE);
 		else
 			execve(cmds[0], cmds, env);
 		close(pipe_fd[1]);
 	}
+	pdata->iterator++;
 	return (0);
 }
 
@@ -73,6 +75,7 @@ int	pipex_open(char	*path, char *mode, t_pipex_data *pdata)
 {
 	int	fd;
 
+	fd = -1;
 	if (ft_vstrcmp(mode, "read"))
 		fd = open(path, O_RDONLY);
 	else if (ft_vstrcmp(mode, "write"))
@@ -109,7 +112,7 @@ void	pipex_fonecheck(t_pipex_data *pdata, char *av[], int ac)
 	{
 		pdata->fone_path = av[1];
 		pdata->fone_fd = pipex_open(pdata->fone_path, "read", pdata); 
-		// check_fone_access(pdata->fone_path);
+		check_fone_access(pdata->fone_path);
 		pdata->ftwo_fd = pipex_open(av[ac - 1], "write", pdata);
 	}
 	pdata->ftwo_path = av[ac - 1];
@@ -122,20 +125,23 @@ int main (int ac, char	*av[], char *env[])
 
 	pipex_check(ac);
 	pdata = (t_pipex_data *) malloc(1 * sizeof(t_pipex_data));
+	pdata->iterator = 1;
+	pdata->count = 1;
 	pipex_fonecheck(pdata, av, ac);
 	pdata->env = env;
 	pdata->hd_offset = 1 * ft_vstrcmp("here_doc", av[1]);
 	pdata->cmds_count = get_command_count(av, pdata->hd_offset);
+	pdata->pidarr = (pid_t *) malloc(pdata->cmds_count * sizeof(pdata->pidarr));
 	get_command_list(av, pdata);
 	dup2(pdata->fone_fd, STDIN_FILENO);
-	dup2(pdata->ftwo_fd, STDOUT_FILENO);
-	pipex_redirect(pdata->cmds[0], env, pdata->fone_fd, pdata);
-	c = 1;
-	while (c < pdata->cmds_count - 1)
+	c = 0;
+	while (c < pdata->cmds_count)
 		pipex_redirect(pdata->cmds[c++], env, pdata->fone_fd, pdata);
-	execve(pdata->cmds[pdata->cmds_count - 1][0], pdata->cmds[pdata->cmds_count - 1], env);
+	while (pdata->count <= pdata->cmds_count)
+		waitpid(pdata->pidarr[pdata->count++], NULL, 0); 
 	close(pdata->fone_fd);
 	close(pdata->ftwo_fd);
 	free_cmds(pdata->cmds);
 	exit(EXIT_SUCCESS);
 }
+

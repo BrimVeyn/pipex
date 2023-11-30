@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:34:26 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/29 19:13:36 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/30 10:14:20 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # define FOPENING_FILE "Could not open file"
 
 #include "../pf_libft/include/pf_ft_printf.h"
+#include <sys/types.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -38,6 +39,9 @@ typedef struct s_pipex_data
 	int		ftwo_fd;
 	int		hd_offset;	
 	int		cmds_count;
+	int		iterator;
+	int		count;
+	pid_t	*pidarr;	
 
 }	t_pipex_data;
 
