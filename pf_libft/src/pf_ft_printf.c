@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 13:12:53 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/27 18:33:23 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/29 18:37:52 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int	ft_printf(const char *fmt, ...)
 				var = run_wflags(var, fmt, &args);
 		}
 		else
-			var.len += ft_putchar_fdm(fmt[var.i], 1);
+			var.len += ft_putchar_fdm(fmt[var.i], 2);
 		var.i++;
 	}
 	va_end(args);

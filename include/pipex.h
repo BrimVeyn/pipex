@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:34:26 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/29 14:41:41 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/29 19:13:36 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <errno.h>
 
 typedef struct s_pipex_data
 {

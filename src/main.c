@@ -6,24 +6,16 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:33:32 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/29 17:12:12 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/29 19:15:46 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
+#include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-int	pipex_exec(char	**cmds, char **env, t_pipex_data pdata)
-{
-	if (execve(cmds[0], cmds, env) == -1)
-	{
-		perror("Invalid command execution");
-		free_cmds(pdata.cmds);
-		return (-1);
-	}
-	return (0);
-}
-
-int	pipex_redirect(char	**cmds, char **env, int fdin, t_pipex_data pdata)
+int	pipex_redirect(char	**cmds, char **env, int fdin, t_pipex_data *pdata)
 {
 	pid_t	pid;
 	int	pipe_fd[2];
@@ -36,17 +28,15 @@ int	pipex_redirect(char	**cmds, char **env, int fdin, t_pipex_data pdata)
 		dup2(pipe_fd[0], STDIN_FILENO);
 		waitpid(pid, NULL, 0);
 		close(pipe_fd[0]);
-
 	}
-	else
+	else if (!pid)
 	{
 		close(pipe_fd[0]);
 		dup2(pipe_fd[1], STDOUT_FILENO);
 		if (fdin == STDIN_FILENO)
 			exit(EXIT_FAILURE);
 		else
-			if (pipex_exec(cmds, env, pdata) == -1)
-				return (-1);
+			execve(cmds[0], cmds, env);
 		close(pipe_fd[1]);
 	}
 	return (0);
@@ -89,8 +79,6 @@ int	pipex_open(char	*path, char *mode, t_pipex_data *pdata)
 		fd = open(path, O_CREAT | O_WRONLY | O_TRUNC, 400);
 	else if (ft_vstrcmp(mode, "append"))
 		fd = open(path, O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
-	else
-		fd = -1;
 	if (fd == -1)
 		pipex_open_error(FOPENING_FILE, pdata);
 	return (fd);
@@ -121,7 +109,7 @@ void	pipex_fonecheck(t_pipex_data *pdata, char *av[], int ac)
 	{
 		pdata->fone_path = av[1];
 		pdata->fone_fd = pipex_open(pdata->fone_path, "read", pdata); 
-		check_fone_access(pdata->fone_path);
+		// check_fone_access(pdata->fone_path);
 		pdata->ftwo_fd = pipex_open(av[ac - 1], "write", pdata);
 	}
 	pdata->ftwo_path = av[ac - 1];
@@ -141,14 +129,11 @@ int main (int ac, char	*av[], char *env[])
 	get_command_list(av, pdata);
 	dup2(pdata->fone_fd, STDIN_FILENO);
 	dup2(pdata->ftwo_fd, STDOUT_FILENO);
-	if (pipex_redirect(pdata->cmds[0], env, pdata->fone_fd, *pdata) == -1)
-		pipex_path_error("Error", pdata);
+	pipex_redirect(pdata->cmds[0], env, pdata->fone_fd, pdata);
 	c = 1;
 	while (c < pdata->cmds_count - 1)
-		if (pipex_redirect(pdata->cmds[c++], env, pdata->fone_fd, *pdata) == -1)
-			pipex_path_error("Error", pdata);
-	if (pipex_exec(pdata->cmds[pdata->cmds_count - 1], env, *pdata) == -1)
-		pipex_path_error("Erorr", pdata);
+		pipex_redirect(pdata->cmds[c++], env, pdata->fone_fd, pdata);
+	execve(pdata->cmds[pdata->cmds_count - 1][0], pdata->cmds[pdata->cmds_count - 1], env);
 	close(pdata->fone_fd);
 	close(pdata->ftwo_fd);
 	free_cmds(pdata->cmds);
