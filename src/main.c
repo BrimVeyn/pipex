@@ -6,142 +6,60 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:33:32 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/30 10:16:47 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/30 14:58:50 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
-#include <errno.h>
-#include <stdlib.h>
-#include <unistd.h>
 
-int	pipex_redirect(char	**cmds, char **env, int fdin, t_pipex_data *pdata)
+int	pipex_redirect(char **cmds, char **env, t_pipex_data *pdata)
 {
 	int	pipe_fd[2];
 
 	pipe(pipe_fd);
 	pdata->pidarr[pdata->iterator] = fork();
 	if (pdata->pidarr[pdata->iterator])
-	{	
+	{
 		close(pipe_fd[1]);
 		dup2(pipe_fd[0], STDIN_FILENO);
 		close(pipe_fd[0]);
 	}
 	else if (!pdata->pidarr[pdata->iterator])
 	{
+		close(pdata->fone_fd);
 		close(pipe_fd[0]);
 		if (pdata->iterator != pdata->cmds_count)
 			dup2(pipe_fd[1], STDOUT_FILENO);
 		else
 			dup2(pdata->ftwo_fd, STDOUT_FILENO);
-		if (fdin == STDIN_FILENO)
-			exit(EXIT_FAILURE);
-		else
-			execve(cmds[0], cmds, env);
 		close(pipe_fd[1]);
+		close(pdata->ftwo_fd);
+		execve(cmds[0], cmds, env);
 	}
 	pdata->iterator++;
 	return (0);
 }
 
-void	read_till_delimiter(t_pipex_data pdata)
-{
-	char *buf;
-	char *new;
-	char *ndelimiter;
-	int	bytes_read;
-
-	bytes_read = 0;
-	buf = ft_calloc(BUFFER_SIZE, 1);
-	new = ft_calloc(1, 1);
-	ndelimiter = ft_cjoin(ft_cjoin(strdup(pdata.delimiter), 10, 1, 0), 10, 1, 1);
-	write(1, "heredoc> ", 9);
-	while (ft_strstr(new, ndelimiter) == 0 && !(ft_strstr(new, pdata.delimiter) != 0 && ft_strlen(new) - 1 == ft_strlen(pdata.delimiter)))
-	{
-		bytes_read = read(STDIN_FILENO, buf, BUFFER_SIZE);
-		new = ft_strjoinfree(new, buf);
-		buf = ft_calloc(bytes_read + BUFFER_SIZE, 1);
-		if (new[ft_strlen(new) - 1] == '\n' && new[ft_strlen(new) - 2] != pdata.delimiter[ft_strlen(pdata.delimiter) - 1])
-			write(1, "heredoc> ", 9);
-	}
-	new = ft_cdel(pdata.delimiter, new);
-	write(pdata.fone_fd, new, ft_strlen(new));
-	free(buf);
-	free(ndelimiter);
-	free(new);
-}
-
-int	pipex_open(char	*path, char *mode, t_pipex_data *pdata)
-{
-	int	fd;
-
-	fd = -1;
-	if (ft_vstrcmp(mode, "read"))
-		fd = open(path, O_RDONLY);
-	else if (ft_vstrcmp(mode, "write"))
-		fd = open(path, O_CREAT | O_WRONLY | O_TRUNC, 400);
-	else if (ft_vstrcmp(mode, "append"))
-		fd = open(path, O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
-	if (fd == -1)
-		pipex_open_error(FOPENING_FILE, pdata);
-	return (fd);
-}
-
-void	pipex_check(int ac)
-{
-	if (ac < 5)
-	{
-		write(STDERR_FILENO, "Invalid number of arguments : pipex uses at least 4 arguments.\n", 63);
-		exit(EXIT_FAILURE);
-	}
-}
-
-void	pipex_fonecheck(t_pipex_data *pdata, char *av[], int ac)
-{
-	if (ft_vstrcmp("here_doc", av[1]))
-	{
-		pdata->delimiter = av[2];
-		pdata->fone_path = ".heredoc_tmp";
-		pdata->fone_fd = pipex_open(".heredoc_tmp", "write", pdata);
-		read_till_delimiter(*pdata);
-		close(pdata->fone_fd);
-		pdata->fone_fd = pipex_open(".heredoc_tmp", "read", pdata);
-		pdata->ftwo_fd = pipex_open(av[ac - 1], "append", pdata);
-	}
-	else
-	{
-		pdata->fone_path = av[1];
-		pdata->fone_fd = pipex_open(pdata->fone_path, "read", pdata); 
-		check_fone_access(pdata->fone_path);
-		pdata->ftwo_fd = pipex_open(av[ac - 1], "write", pdata);
-	}
-	pdata->ftwo_path = av[ac - 1];
-}
-
-int main (int ac, char	*av[], char *env[])
+int	main(int ac, char *av[], char *env[])
 {
 	t_pipex_data	*pdata;
-	int	c;
+	int				c;
 
 	pipex_check(ac);
-	pdata = (t_pipex_data *) malloc(1 * sizeof(t_pipex_data));
+	pdata = (t_pipex_data *)malloc(1 * sizeof(t_pipex_data));
 	pdata->iterator = 1;
 	pdata->count = 1;
 	pipex_fonecheck(pdata, av, ac);
 	pdata->env = env;
 	pdata->hd_offset = 1 * ft_vstrcmp("here_doc", av[1]);
 	pdata->cmds_count = get_command_count(av, pdata->hd_offset);
-	pdata->pidarr = (pid_t *) malloc(pdata->cmds_count * sizeof(pdata->pidarr));
 	get_command_list(av, pdata);
+	pdata->pidarr = (pid_t *)malloc(pdata->cmds_count * sizeof(pdata->pidarr));
 	dup2(pdata->fone_fd, STDIN_FILENO);
 	c = 0;
 	while (c < pdata->cmds_count)
-		pipex_redirect(pdata->cmds[c++], env, pdata->fone_fd, pdata);
+		pipex_redirect(pdata->cmds[c++], env, pdata);
 	while (pdata->count <= pdata->cmds_count)
-		waitpid(pdata->pidarr[pdata->count++], NULL, 0); 
-	close(pdata->fone_fd);
-	close(pdata->ftwo_fd);
-	free_cmds(pdata->cmds);
-	exit(EXIT_SUCCESS);
+		waitpid(pdata->pidarr[pdata->count++], NULL, 0);
+	free_and_exit(pdata);
 }
-

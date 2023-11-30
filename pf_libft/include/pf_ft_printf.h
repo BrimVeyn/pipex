@@ -6,12 +6,12 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 09:34:33 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/19 18:17:20 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/30 10:21:03 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PRINTF_H
-# define FT_PRINTF_H
+#ifndef PF_FT_PRINTF_H
+# define PF_FT_PRINTF_H
 
 # include "libft.h"
 # include <stdarg.h>

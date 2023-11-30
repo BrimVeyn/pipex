@@ -12,12 +12,12 @@
 
 #include "../include/pipex.h"
 
-char	*get_file_two(char	*av[])
+char	*get_file_two(char *av[])
 {
 	size_t	j;
 
 	j = 0;
 	while (av[j] != NULL)
 		j++;
-	return(ft_strdup(av[j - 1]));
+	return (ft_strdup(av[j - 1]));
 }

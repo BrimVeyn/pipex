@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 11:09:13 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/18 11:40:12 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/30 12:25:35 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ char	*ft_strjoinfree(char const *s1, char const *s2)
 		j++;
 	}
 	cat[i + j] = 0;
+	free((void *)s1);
 	free((void *)s2);
 	return (cat);
 }

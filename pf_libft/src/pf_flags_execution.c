@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 07:53:24 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/27 18:33:09 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/30 10:33:37 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ char	*execute_flag(const char *fstr, t_flag_triglist a)
 {
 	char		*newstr;
 	int const	offset = 2 * (a.type == 'x' || a.type == 'X');
-	int const	base_len = (int)ft_strlen(fstr);
+	int const	base_len = (int) ft_strlen(fstr);
 	const char	*base_str = ft_strdup(fstr);
 
 	newstr = (char *)fstr;

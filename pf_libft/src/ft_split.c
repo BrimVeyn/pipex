@@ -48,7 +48,6 @@ static char	*word_dup(const char *str, int start, int finish)
 	return (word);
 }
 
-
 void	*free_tab(char *split[])
 {
 	size_t	i;
@@ -80,8 +79,8 @@ char	**ft_split(char const *s, char c)
 		else if ((s[i] == c || i == ft_strlen(s)) && index >= 0)
 		{
 			split[j++] = word_dup(s, index, i);
-			if (!split[j -1])
-				return(free_tab(split));
+			if (!split[j - 1])
+				return (free_tab(split));
 			index = -1;
 		}
 		i++;
