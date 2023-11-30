@@ -6,7 +6,7 @@
 /*   By: bvan-pae <bryan.vanpaemel@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:34:26 by bvan-pae          #+#    #+#             */
-/*   Updated: 2023/11/30 14:53:30 by bvan-pae         ###   ########.fr       */
+/*   Updated: 2023/11/30 15:20:26 by bvan-pae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # define FOPENING_FILE "Could not open file"
 # define EMPTY_COMMAND "Invalid command : Empty string"
 # define NO_PATH "No path found in env variable"
-# define INVALID_COMMAND "Invalid command : Command only contains dot(s) and slash(s)"
+# define INVALID_COMMAND "Invalid command : found dot(s) and slash(s) only"
 
 # include "../pf_libft/include/pf_ft_printf.h"
 # include <errno.h>
@@ -63,7 +63,7 @@ char		*pipex_strstr(char **haystack, char *needle);
 char		*ft_cdel(char *to_del, char *str);
 char		*parse_env(char *exec, t_pipex_data *pdata);
 char		*parse_cmds(char **cmds, t_pipex_data *pdata);
-void		pipex_path_error(char *message, t_pipex_data *pdata);
+void		pipex_path_error(char *message);
 void		pipex_open_error(char *message, t_pipex_data *pdata);
 void		pipex_empty_cmd_error(char *message, t_pipex_data *pdata);
 void		pipex_no_path_error(char *message, t_pipex_data *pdata);
